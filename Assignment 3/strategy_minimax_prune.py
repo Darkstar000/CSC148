@@ -46,6 +46,7 @@ class StrategyMiniMax(Strategy):
         and the score (1/0/-1 for a win/tie/loss) in a tuple. The children of
         the node will be the possible moves from that node.
         """
+        dictionary = {}
 
         if state.over:
             if state.winner(initial_player):
@@ -82,3 +83,4 @@ def get_opponent(current_player):
     if current_player == "p1":
         return "p2"
     return "p1"
+

@@ -42,7 +42,11 @@ class GameView:
                 print('You choose: {}'.format(m))
             else:
                 # The computer makes a move.
+                import timeit
+                start = timeit.default_timer()
                 m = self.strategy.suggest_move(self.state)
+                stop = timeit.default_timer()
+                print("The runtime is: {}".format(stop-start))
                 print('The computer chooses: {}'.format(m))
             self.state = self.state.apply_move(m)
             print('New game state: ', str(self.state))

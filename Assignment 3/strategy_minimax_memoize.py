@@ -25,6 +25,7 @@ class StrategyMiniMaxMemoize(Strategy):
         Return a move selected by minimax from the moves possible in the
         current game state
         """
+
         dictionary = {}
         # Currently fatalistic.
         move_tree = self.generate_move_tree(state, state.next_player,
@@ -46,7 +47,8 @@ class StrategyMiniMaxMemoize(Strategy):
         Return a Tree ADT of the possible moves based on the current state.
         Each node's value will contain the move chosen to arrive at the node,
         and the score (1/0/-1 for a win/tie/loss) in a tuple. The children of
-        the node will be the possible moves from that node.
+        the node will be the possible moves from that node. Stores any
+        calculated nodes in dictionary to avoid re-calculation.
         """
 
         if state.over:
@@ -56,6 +58,7 @@ class StrategyMiniMaxMemoize(Strategy):
                 return Tree((chosen_move, -1))
             else:
                 return Tree((chosen_move, 0))
+        # Check if current state has already been calculated
         elif repr(state) in dictionary:
             return dictionary[repr(state)]
         else:
@@ -69,15 +72,21 @@ class StrategyMiniMaxMemoize(Strategy):
                                                         initial_player,
                                                         dictionary, move))
             for child in children:
+                # Collect scores of all children
                 scores.append(child.value[1])
-            # Use minimax to assign values to each move
+            # Use minimax to chose assigned score
             m_score = self.minimax(state, initial_player, scores)
+            # Store results from current game state for future reference
             dictionary[repr(state)] = Tree((chosen_move, m_score), children)
             return Tree((chosen_move, m_score), children)
 
 def get_opponent(current_player):
     """(str) -> str
+
     Return the opponent of the current player. Return either "p1" or "p2"
+
+    >>> get_opponent('p1')
+    'p2'
     """
 
     if current_player == "p1":
