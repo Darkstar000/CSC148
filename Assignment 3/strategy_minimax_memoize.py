@@ -9,7 +9,7 @@ class StrategyMiniMaxMemoize(Strategy):
     """
 
     def minimax(self, state, initial_player, scores):
-        """(StrategyMiniMax, GameState, str, list-of-int) -> int
+        """(StrategyMiniMaxMemoize, GameState, str, list-of-int) -> int
 
         Return the maximum score if it is current player is the initial
         player, or the minimum score if current player is not.
@@ -20,7 +20,7 @@ class StrategyMiniMaxMemoize(Strategy):
         return min(scores)
 
     def suggest_move(self, state):
-        """(StrategyMiniMax, GameState) -> GameMove
+        """(StrategyMiniMaxMemoize, GameState) -> GameMove
 
         Return a move selected by minimax from the moves possible in the
         current game state
@@ -42,7 +42,7 @@ class StrategyMiniMaxMemoize(Strategy):
 
     def generate_move_tree(self, state, initial_player,
                            dictionary, chosen_move=None):
-        """(StrategyMiniMax, GameState, str, GameMove) -> Tree
+        """(StrategyMiniMaxMemoize, GameState, str, GameMove) -> Tree
 
         Return a Tree ADT of the possible moves based on the current state.
         Each node's value will contain the move chosen to arrive at the node,

@@ -3,13 +3,13 @@ from game_state import GameState
 from tree import Tree
 
 
-class StrategyMiniMax(Strategy):
+class StrategyMiniMaxPrune(Strategy):
     """
     AI Controller which determines moves based on minimax strategy
     """
 
     def minimax(self, state, initial_player, scores):
-        """(StrategyMiniMax, GameState, str, list-of-int) -> int
+        """(StrategyMiniMaxPrune, GameState, str, list-of-int) -> int
 
         Return the maximum score if it is current player is the initial
         player, or the minimum score if current player is not.
@@ -20,7 +20,7 @@ class StrategyMiniMax(Strategy):
         return min(scores)
 
     def suggest_move(self, state):
-        """(StrategyMiniMax, GameState) -> GameMove
+        """(StrategyMiniMaxPrune, GameState) -> GameMove
 
         Return a move selected by minimax from the moves possible in the
         current game state
@@ -39,7 +39,7 @@ class StrategyMiniMax(Strategy):
                 return move.value[0]
 
     def generate_move_tree(self, state, initial_player, chosen_move=None):
-        """(StrategyMiniMax, GameState, str, GameMove) -> Tree
+        """(StrategyMiniMaxPrune, GameState, str, GameMove) -> Tree
 
         Return a Tree ADT of the possible moves based on the current state.
         Each node's value will contain the move chosen to arrive at the node,
@@ -62,14 +62,28 @@ class StrategyMiniMax(Strategy):
             for move in possible_moves:
                 new_state = state.apply_move(move)
                 # Recursively generate the children of each move
-                children.append(self.generate_move_tree(new_state,
-                                                        initial_player, move))
+                next_node = self.generate_move_tree(new_state,
+                                                    initial_player, move)
+                children.append(next_node)
+                if self.prune(state, initial_player,next_node.value[1]):
+                    return Tree((chosen_move, next_node.value[1]), children)
             for child in children:
                 # Collect scores of all children
                 scores.append(child.value[1])
             # Use minimax to chose assigned score
             m_score = self.minimax(state, initial_player, scores)
             return Tree((chosen_move, m_score), children)
+
+    def prune(self, state, initial_player, score):
+        """(StrategyMiniMaxPrune, GameState, str, int) -> boolean
+
+        Return whether a branch of a move tree should be pruned
+        """
+        if (state.next_player is not initial_player) and score == -1:
+            return True
+        if (state.next_player is initial_player) and score == 1:
+            return True
+        return False
 
 def get_opponent(current_player):
     """(str) -> str
